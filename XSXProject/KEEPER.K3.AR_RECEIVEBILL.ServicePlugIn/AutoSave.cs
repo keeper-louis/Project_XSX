@@ -21,6 +21,7 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
                 foreach (DynamicObject DataEntity in e.DataEntitys)
                 {
                     //DataEntity["CONTACTUNITTYPE"]
+                    string test = "test";
                 }
             }
         }
