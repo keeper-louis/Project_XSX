@@ -43,11 +43,31 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Kingdee.BOS">
-      <HintPath>C:\Program Files (x86)\Kingdee\K3Cloud\WebSite\Bin\Kingdee.BOS.dll</HintPath>
+    <Reference Include="Kingdee.BOS, Version=7.1.512.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\Kingdee\K3Cloud\WebSite\bin\Kingdee.BOS.dll</HintPath>
     </Reference>
-    <Reference Include="Kingdee.BOS.WebApi.Client">
-      <HintPath>C:\Program Files (x86)\Kingdee\K3Cloud\WebSite\Bin\Kingdee.BOS.WebApi.Client.dll</HintPath>
+    <Reference Include="Kingdee.BOS.App">
+      <HintPath>..\..\..\..\Program Files (x86)\Kingdee\K3Cloud\WebSite\bin\Kingdee.BOS.App.dll</HintPath>
+    </Reference>
+    <Reference Include="Kingdee.BOS.App.Core">
+      <HintPath>..\..\..\..\Program Files (x86)\Kingdee\K3Cloud\WebSite\bin\Kingdee.BOS.App.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Kingdee.BOS.BusinessEntity">
+      <HintPath>..\..\..\..\Program Files (x86)\Kingdee\K3Cloud\WebSite\bin\Kingdee.BOS.BusinessEntity.dll</HintPath>
+    </Reference>
+    <Reference Include="Kingdee.BOS.Contracts">
+      <HintPath>..\..\..\..\Program Files (x86)\Kingdee\K3Cloud\WebSite\bin\Kingdee.BOS.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="Kingdee.BOS.Core">
+      <HintPath>..\..\..\..\Program Files (x86)\Kingdee\K3Cloud\WebSite\bin\Kingdee.BOS.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Kingdee.BOS.DataEntity">
+      <HintPath>..\..\..\..\Program Files (x86)\Kingdee\K3Cloud\WebSite\bin\Kingdee.BOS.DataEntity.dll</HintPath>
+    </Reference>
+    <Reference Include="Kingdee.BOS.WebApi.Client, Version=7.1.512.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\Kingdee\K3Cloud\WebSite\bin\Kingdee.BOS.WebApi.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=1.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.1.2.1\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
@@ -82,8 +102,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>C:\Program Files (x86)\Kingdee\K3Cloud\WebSite\Bin\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\Kingdee\K3Cloud\WebSite\bin\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />

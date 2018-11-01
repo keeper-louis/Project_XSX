@@ -14,7 +14,7 @@ namespace KEEPER.K3.XSX.Core.Entity
         /// <summary>
         /// 所属区域ID
         /// </summary>
-        public int BelongCustID { get; set; }
+        public long BelongCustID { get; set; }
         /// <summary>
         /// 所属区域编码
         /// </summary>
@@ -22,7 +22,7 @@ namespace KEEPER.K3.XSX.Core.Entity
         /// <summary>
         /// 客户类型ID
         /// </summary>
-        public int CustTypeID { get; set; }
+        public long CustTypeID { get; set; }
         /// <summary>
         /// 客户类型编码
         /// </summary>

@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 namespace KEEPER.K3.XSX.Contracts
 {
     /// <summary>
-    /// 服务工厂
+    /// 客户服务工厂
     /// </summary>
-    public class XSXServiceFactory
+    public class CustomerServiceFactory
     {
         public static ServicesContainer _mapServer = new ServicesContainer();
         static bool noRegistered = true;
-
-        static XSXServiceFactory()
+        static CustomerServiceFactory()
         {
             RegisterService();
 
@@ -51,18 +50,6 @@ namespace KEEPER.K3.XSX.Contracts
             return instance;
         }
 
-        public static void RegisterService()
-        {
-            if (!noRegistered) return;
-
-
-            ////增加对应的接口与实现类的对应关系
-
-            _mapServer.Add(typeof(ICommonService), "KEEPER.K3.App.CommonService,KEEPER.K3.App");
-
-            //这句话放到最后
-            noRegistered = false;
-        }
         public static void CloseService(object service)
         {
             IDisposable disposable = service as IDisposable;
@@ -72,10 +59,17 @@ namespace KEEPER.K3.XSX.Contracts
             }
         }
 
-        public static ICommonService GetCommonService(Context ctx)
+        public static void RegisterService()
         {
-            return GetService<ICommonService>(ctx);
+            if (!noRegistered) return;
+
+
+            ////增加对应的接口与实现类的对应关系
+
+            _mapServer.Add(typeof(ICustomerService), "KEEPER.K3.App.CustomerService,KEEPER.K3.App");
+
+            //这句话放到最后
+            noRegistered = false;
         }
-        
     }
 }
