@@ -7,23 +7,24 @@ using System.Text;
 using System.Threading.Tasks;
 using Kingdee.BOS.Core.DynamicForm.PlugIn.Args;
 using Kingdee.BOS.Orm.DataEntity;
-using Kingdee.BOS.App.Data;
 using Kingdee.BOS.Core.DynamicForm;
-using Kingdee.BOS.Core.Bill;
+using KEEPER.K3.XSXServiceHelper;
 using Kingdee.BOS;
+using Kingdee.BOS.App.Data;
 
-namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
+namespace KEEPER.K3.SALOUT.ServicePlugIn
 {
-    [Description("收款单审核自动生成费用申请单，收付款用途为xx加盟费，客户类型：门店")]
+    [Description("配送出库单审核")]
     public class AutoAudit:AbstractOperationServicePlugIn
     {
-        private string orgNumber = string.Empty;
+        private string orgNumber = "CC001";//默认为生产公司，以后启用多生产公司的时候在说
         private string belongCustNumbaer = string.Empty;
+        double YJSum = 0;
         public override void OnPreparePropertys(PreparePropertysEventArgs e)
         {
             base.OnPreparePropertys(e);
-            e.FieldKeys.Add("FBelongCust");
         }
+
         public override void EndOperationTransaction(EndOperationTransactionArgs e)
         {
             base.EndOperationTransaction(e);
@@ -31,15 +32,12 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
             {
                 foreach (DynamicObject DataEntity in e.DataEntitys)
                 {
-                    orgNumber = Convert.ToString(((DynamicObject)DataEntity["FPAYORGID"])["Number"]);
-                    belongCustNumbaer = Convert.ToString(((DynamicObject)DataEntity["FBelongCust"])["Number"]);
-                    long BillID = Convert.ToInt64(DataEntity["Id"]);
-                    //收款用途，门店加盟费的ID：108872,******根据实际编码进行修改******
-                    string strSql = string.Format(@"/*dialect*/SELECT COUNT(*) NUM FROM T_AR_RECEIVEBILL AR INNER JOIN T_AR_RECEIVEBILLENTRY ARY ON AR.FID = ARY.FID WHERE ARY.FPURPOSEID = 108872 AND AR.FID = {0}", BillID);
-                    int num = DBUtils.ExecuteScalar<int>(this.Context, strSql, -1, null);
-                    //收付款用途：xx加盟费，客户类型=门店
-                    if (num>=1)//生成费用申请单
+                    //佣金合计大于0并且客户类型=门店，审核时需要自动生成费用申请单。
+                    if (Convert.ToDouble(DataEntity["FCommissionSum"])>0&&Convert.ToString(((DynamicObject)DataEntity["FCUSTTYPE"])["Number"]).Equals("MD"))
                     {
+                        belongCustNumbaer = Convert.ToString(((DynamicObject)DataEntity["FBelongCust"])["Number"]);
+                        YJSum = Convert.ToDouble(DataEntity["FCommissionSum"]);
+                        long BillID = Convert.ToInt64(DataEntity["Id"]);
                         Action<IDynamicFormViewService> fillBillPropertys = new Action<IDynamicFormViewService>(fillPropertys);
                         DynamicObject billModel = XSXServiceHelper.XSXServiceHelper.CreateBillMode(this.Context, "ER_ExpenseRequest", fillBillPropertys);
                         IOperationResult saveResult = XSXServiceHelper.XSXServiceHelper.Save(this.Context, "ER_ExpenseRequest", billModel);
@@ -58,10 +56,10 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
                         {
                             //反写"已生成费用申请单"，并反写单据编号
                             string costRequestNum = saveResult.OperateResult[0].Number;
-                            string updateSql = string.Format(@"/*dialect*/Update T_AR_RECEIVEBILL set FISCREATEAPPLY = 1,FCOSTAPPLYNO = '{0}' where FID = {1}", costRequestNum,BillID);
+                            string updateSql = string.Format(@"/*dialect*/Update T_SAL_OUTSTOCK set FISCREATEAPPLY = 1,FCOSTAPPLYNO = '{0}' where FID = {1}", costRequestNum, BillID);
                             DBUtils.Execute(this.Context, updateSql);
                         }
-                    }
+                    } 
                 }
             }
         }
@@ -70,13 +68,13 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
         {
             dynamicFormView.SetItemValueByNumber("FStaffID", "Proxy", 0);//申请人，默认设置为固定的一个人
             //((IDynamicFormView)dynamicFormView).InvokeFieldUpdateService("FSTAFFNUMBER", 0);//SetItemValueByNumber不会触发值更新事件，需要继续调用该函数
-            //FReason : "加盟奖励申请"
-            dynamicFormView.UpdateValue("FReason", 0, "加盟奖励申请");
-            //申请组织：收款单的收款组织
+            //FReason : "配送佣金申请"
+            dynamicFormView.UpdateValue("FReason", 0, "配送佣金申请");
+            //申请组织：默认为生产组织，后续多组织可以更改
             dynamicFormView.SetItemValueByNumber("FOrgID", orgNumber, 0);
-            //费用承担组织：收款单的收款组织
+            //费用承担组织：默认为生产组织，后续多组织可以更改
             dynamicFormView.SetItemValueByNumber("FCostOrgID", orgNumber, 0);
-            //付款组织：收款单的收款组织
+            //付款组织：默认为生产组织，后续多组织可以更改
             dynamicFormView.SetItemValueByNumber("FPayOrgID", orgNumber, 0);
             //FTOCONTACTUNITTYPE : "BD_Customer"，往来单位类型
             dynamicFormView.UpdateValue("FTOCONTACTUNITTYPE", 0, "BD_Customer");
@@ -87,10 +85,10 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
             //费用承担部门：固定值
             dynamicFormView.SetItemValueByNumber("FCostDeptID", "BM000017", 0);
             //分录
-            //费用项目：固定值
-            dynamicFormView.SetItemValueByNumber("FExpenseItemID", "CI001",0);
-            //申请金额：固定值：10000
-            dynamicFormView.UpdateValue("FOrgAmount", 0, 10000);
+            //费用项目：固定值，佣金
+            dynamicFormView.SetItemValueByNumber("FExpenseItemID", "CI002", 0);
+            //申请金额：固定值，佣金合计
+            dynamicFormView.UpdateValue("FOrgAmount", 0, YJSum);
             //新增分录
             //((IBillView)dynamicFormView).Model.CreateNewEntryRow("FEntity");
             //如果预知有多条分录，可以使用这个方法进行批量新增

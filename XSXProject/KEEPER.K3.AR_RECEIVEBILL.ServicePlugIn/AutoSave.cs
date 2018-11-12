@@ -97,7 +97,7 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
         public override void EndOperationTransaction(EndOperationTransactionArgs e)
         {
             base.EndOperationTransaction(e);
-
+            /*只取第一行判断，会造成现象，有的单据能自动提交审核，有的单据不会*/
             object[] ids = (from p in e.DataEntitys.Where(p=> !(((DynamicObject)(((DynamicObjectCollection)p["RECEIVEBILLENTRY"])[0])["PURPOSEID"])["Number"].Equals("SFKYT001")||((DynamicObject)(((DynamicObjectCollection)p["RECEIVEBILLENTRY"])[0])["PURPOSEID"])["Number"].Equals("SFKYT002")))
                                 select p[0]).ToArray();//获取收付款用途不等于加盟费的单据ID
             IOperationResult submitResult = XSXServiceHelper.XSXServiceHelper.Submit(this.Context, "AR_RECEIVEBILL",ids);

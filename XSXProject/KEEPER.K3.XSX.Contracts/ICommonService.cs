@@ -34,6 +34,18 @@ namespace KEEPER.K3.XSX.Contracts
 
 
         /// <summary>
+        /// 创建单据
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="FormID"></param>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(ServiceFault))]
+        IOperationResult SaveBill(Context ctx, string FormID,DynamicObject dyObject);
+
+
+        /// <summary>
         /// 提交单据
         /// </summary>
         /// <param name="ctx"></param>
@@ -65,6 +77,17 @@ namespace KEEPER.K3.XSX.Contracts
         [OperationContract]
         [FaultContract(typeof(ServiceFault))]
         void Log(Context ctx, string Operation,IOperationResult returnResult);
+
+        /// <summary>
+        /// 组装费用申请单数据包
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="FormID"></param>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(ServiceFault))]
+        DynamicObject installCostRequestPackage(Context ctx, string FormID,Action<IDynamicFormViewService> fillBillPropertys,string BillTypeId);
 
 
         /// <summary>

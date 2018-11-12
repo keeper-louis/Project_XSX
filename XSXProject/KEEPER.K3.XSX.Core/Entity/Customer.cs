@@ -12,6 +12,10 @@ namespace KEEPER.K3.XSX.Core.Entity
     public class Customer
     {
         /// <summary>
+        /// 客户ID
+        /// </summary>
+        public long custID { get; set; }
+        /// <summary>
         /// 所属区域ID
         /// </summary>
         public long BelongCustID { get; set; }

@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="CommonService.cs" />
     <Compile Include="CustomerService.cs" />
+    <Compile Include="OrderRequestService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

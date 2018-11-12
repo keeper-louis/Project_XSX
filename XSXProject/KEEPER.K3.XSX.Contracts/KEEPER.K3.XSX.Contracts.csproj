@@ -72,6 +72,8 @@
     <Compile Include="CustomerServiceFactory.cs" />
     <Compile Include="ICommonService.cs" />
     <Compile Include="ICustomerService.cs" />
+    <Compile Include="IOrderRequestService.cs" />
+    <Compile Include="OrderRequestServiceFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XSXServiceFactory.cs" />
   </ItemGroup>

@@ -1,5 +1,4 @@
-﻿using KEEPER.K3.XSX.Core.Entity;
-using Kingdee.BOS;
+﻿using Kingdee.BOS;
 using Kingdee.BOS.Rpc;
 using System;
 using System.Collections.Generic;
@@ -11,32 +10,30 @@ using System.Threading.Tasks;
 namespace KEEPER.K3.XSX.Contracts
 {
     /// <summary>
-    /// 客户服务契约
+    /// 要货控制契约
     /// </summary>
     [RpcServiceError]
     [ServiceContract]
-    public interface ICustomerService
+    public interface IOrderRequestService
     {
         /// <summary>
-        /// 通过客户内码获取客户属性契约
+        /// 获取区域客户要货申请可用额度
         /// </summary>
-        /// <param name="ctx">上下文</param>
-        /// <param name="custID">客户ID</param>
+        /// <param name="ctx"></param>
+        /// <param name="custID"></param>
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(ServiceFault))]
-        Customer GetCustomerProperty(Context ctx, long custID);
+        Double GetQYAmount(Context ctx, long custID);
 
         /// <summary>
-        /// 通过对应组织内码获取客户属性契约
+        /// 获取门店客户要货申请可用额度
         /// </summary>
-        /// <param name="ctx">上下文</param>
-        /// <param name="custID">对应组织ID</param>
+        /// <param name="ctx"></param>
+        /// <param name="custID"></param>
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(ServiceFault))]
-        Customer GetIntCustomerProperty(Context ctx, long orgID);
-
-
+        Double GetMDAmount(Context ctx, long custID);
     }
 }
