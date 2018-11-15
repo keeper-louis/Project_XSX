@@ -16,6 +16,10 @@ namespace KEEPER.K3.XSX.Core.Entity
         /// </summary>
         public long custID { get; set; }
         /// <summary>
+        /// 客户编码
+        /// </summary>
+        public string custNo { get; set; }
+        /// <summary>
         /// 所属区域ID
         /// </summary>
         public long BelongCustID { get; set; }

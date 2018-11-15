@@ -17,7 +17,7 @@ namespace KEEPER.K3.SALOUT.ServicePlugIn
     [Description("配送出库单审核")]
     public class AutoAudit:AbstractOperationServicePlugIn
     {
-        private string orgNumber = "CC001";//默认为生产公司，以后启用多生产公司的时候在说
+        private string orgNumber = "1004";//默认为生产公司，以后启用多生产公司的时候在说
         private string belongCustNumbaer = string.Empty;
         double YJSum = 0;
         public override void OnPreparePropertys(PreparePropertysEventArgs e)
@@ -33,7 +33,7 @@ namespace KEEPER.K3.SALOUT.ServicePlugIn
                 foreach (DynamicObject DataEntity in e.DataEntitys)
                 {
                     //佣金合计大于0并且客户类型=门店，审核时需要自动生成费用申请单。
-                    if (Convert.ToDouble(DataEntity["FCommissionSum"])>0&&Convert.ToString(((DynamicObject)DataEntity["FCUSTTYPE"])["Number"]).Equals("MD"))
+                    if (Convert.ToDouble(DataEntity["FCommissionSum"])>0&&Convert.ToString(((DynamicObject)DataEntity["FCUSTTYPE"])["Number"]).Equals("MD01"))
                     {
                         belongCustNumbaer = Convert.ToString(((DynamicObject)DataEntity["FBelongCust"])["Number"]);
                         YJSum = Convert.ToDouble(DataEntity["FCommissionSum"]);
@@ -86,7 +86,7 @@ namespace KEEPER.K3.SALOUT.ServicePlugIn
             dynamicFormView.SetItemValueByNumber("FCostDeptID", "BM000017", 0);
             //分录
             //费用项目：固定值，佣金
-            dynamicFormView.SetItemValueByNumber("FExpenseItemID", "CI002", 0);
+            dynamicFormView.SetItemValueByNumber("FExpenseItemID", "200", 0);
             //申请金额：固定值，佣金合计
             dynamicFormView.UpdateValue("FOrgAmount", 0, YJSum);
             //新增分录

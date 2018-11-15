@@ -27,8 +27,8 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
                 string billNo = Convert.ToString(requestDynamic["BillNo"]);//收款单单号
                 string costReqBillNo = Convert.ToString(requestDynamic["FCostApplyNo"]);//费用申请单单号
                 DynamicObjectCollection Entry = requestDynamic["RECEIVEBILLENTRY"] as DynamicObjectCollection;
-                string PurPoseNum = Convert.ToString(((DynamicObject)Entry[0]["PURPOSEID"])["Number"]);//门店加盟费：SFKYT001
-                if (PurPoseNum.Equals("SFKYT001")&&isCreate)
+                string PurPoseNum = Convert.ToString(((DynamicObject)Entry[0]["PURPOSEID"])["Number"]);//门店加盟费：005
+                if (PurPoseNum.Equals("005")&&isCreate)
                 {
                     string msg = string.Format("单据：{0}收付款用途包含门店加盟费,已生成费用申请单：{1},不允许反审核",billNo,costReqBillNo);
                     var errInfo = new ValidationErrorInfo(

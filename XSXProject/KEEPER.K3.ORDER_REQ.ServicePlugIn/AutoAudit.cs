@@ -18,7 +18,7 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
             e.FieldKeys.Add("FCUSTTYPE");
             e.FieldKeys.Add("FAPPLYCUST");
             e.FieldKeys.Add("FORGTYPE");
-            e.FieldKeys.Add("FBILLALLAMOUNT");
+            e.FieldKeys.Add("FTOTALAMOUNT");
         }
         public override void OnAddValidators(AddValidatorsEventArgs e)
         {

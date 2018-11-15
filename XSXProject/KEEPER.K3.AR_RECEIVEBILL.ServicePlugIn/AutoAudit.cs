@@ -34,8 +34,8 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
                     orgNumber = Convert.ToString(((DynamicObject)DataEntity["FPAYORGID"])["Number"]);
                     belongCustNumbaer = Convert.ToString(((DynamicObject)DataEntity["FBelongCust"])["Number"]);
                     long BillID = Convert.ToInt64(DataEntity["Id"]);
-                    //收款用途，门店加盟费的ID：108872,******根据实际编码进行修改******
-                    string strSql = string.Format(@"/*dialect*/SELECT COUNT(*) NUM FROM T_AR_RECEIVEBILL AR INNER JOIN T_AR_RECEIVEBILLENTRY ARY ON AR.FID = ARY.FID WHERE ARY.FPURPOSEID = 108872 AND AR.FID = {0}", BillID);
+                    //收款用途，门店加盟费的ID：113486,******根据实际编码进行修改******
+                    string strSql = string.Format(@"/*dialect*/SELECT COUNT(*) NUM FROM T_AR_RECEIVEBILL AR INNER JOIN T_AR_RECEIVEBILLENTRY ARY ON AR.FID = ARY.FID WHERE ARY.FPURPOSEID = 113486 AND AR.FID = {0}", BillID);
                     int num = DBUtils.ExecuteScalar<int>(this.Context, strSql, -1, null);
                     //收付款用途：xx加盟费，客户类型=门店
                     if (num>=1)//生成费用申请单
@@ -88,7 +88,7 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
             dynamicFormView.SetItemValueByNumber("FCostDeptID", "BM000017", 0);
             //分录
             //费用项目：固定值
-            dynamicFormView.SetItemValueByNumber("FExpenseItemID", "CI001",0);
+            dynamicFormView.SetItemValueByNumber("FExpenseItemID", "100", 0);
             //申请金额：固定值：10000
             dynamicFormView.UpdateValue("FOrgAmount", 0, 10000);
             //新增分录

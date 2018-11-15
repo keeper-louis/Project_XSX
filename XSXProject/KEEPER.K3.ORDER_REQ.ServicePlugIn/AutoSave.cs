@@ -42,12 +42,12 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
                     {
                         //收款用途：订货保证金：No,SFKYT004 Id:108875 *************按照实际情况进行修改***********
                         //组织类型：生产：No，SC，ID：108867 *************按照实际情况进行修改***********
-                        dataEntity["FOrderAmount"] = XSXServiceHelper.XSXServiceHelper.GetQYAmount(this.Context, cust.custID); ;
+                        dataEntity["FOrderAmount"] = XSXServiceHelper.XSXServiceHelper.GetQYAmount(this.Context, cust.custNo,cust.custID); ;
                     }
                     //客户类型：门店客户MD，组织类型：门店MD
-                    if (Convert.ToString(CustType["Number"]).Equals("MD") && Convert.ToString(OrgType["Number"]).Equals("MD"))
+                    if (Convert.ToString(CustType["Number"]).Equals("MD01") && Convert.ToString(OrgType["Number"]).Equals("MD01"))
                     {                        
-                        dataEntity["FOrderAmount"] = XSXServiceHelper.XSXServiceHelper.GetMDAmount(this.Context, cust.custID);
+                        dataEntity["FOrderAmount"] = XSXServiceHelper.XSXServiceHelper.GetMDAmount(this.Context,cust.custNo, cust.custID);
                     }
                 }
             }

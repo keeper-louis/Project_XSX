@@ -25,7 +25,7 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
             foreach (ExtendedDataEntity item in dataEntities)
             {
                 DynamicObject requestDynamic = item.DataEntity;
-                //客户类别：区域：QY
+                //客户类别：区域：QY 
                 if (Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals("QY"))
                 {
                     string strSql = string.Format(@"/*dialect*/select a.FBILLNO, b.FSEQ
@@ -34,7 +34,8 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
     on a.FID = b.FID
  where a.FAPPLYCUST = {0}
    and b.FMRPCLOSESTATUS <> 'B'
-   and a.FCUSTTYPE = {1}", Convert.ToInt64(((DynamicObject)requestDynamic["FAPPLYCUST"])["Id"]), Convert.ToInt64(((DynamicObject)requestDynamic["FCUSTTYPE"])["Id"]));
+   and a.FCUSTTYPE = {1}
+   and a.FID <> {2} ", Convert.ToInt64(((DynamicObject)requestDynamic["FAPPLYCUST"])["Id"]), Convert.ToInt64(((DynamicObject)requestDynamic["FCUSTTYPE"])["Id"]), Convert.ToInt64(requestDynamic["Id"]));
                     using (IDataReader reader = DBUtils.ExecuteReader(this.Context, strSql))
                     {
                         while (reader.Read())
@@ -54,13 +55,13 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
                         }
                     }
                 }
-                else if (Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals("QY")&& Convert.ToString(((DynamicObject)requestDynamic["FORGTYPE"])["Number"]).Equals("QY"))
+                if (Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals("QY")&& Convert.ToString(((DynamicObject)requestDynamic["FORGTYPE"])["Number"]).Equals("QY"))
                 {
-                    double FBILLALLAMOUNT = Convert.ToDouble(requestDynamic["FBILLALLAMOUNT"]);
-                    double QYAmount = XSXServiceHelper.XSXServiceHelper.GetQYAmount(this.Context, Convert.ToInt64(((DynamicObject)requestDynamic["FApplyCust"])["Id"]));
-                    if (FBILLALLAMOUNT> QYAmount)
+                    double TotalAmount = Convert.ToDouble(requestDynamic["TotalAmount"]);
+                    double QYAmount = XSXServiceHelper.XSXServiceHelper.GetQYAmount(this.Context, Convert.ToString(((DynamicObject)requestDynamic["FApplyCust"])["Number"]), Convert.ToInt64(((DynamicObject)requestDynamic["FApplyCust"])["Id"]));
+                    if (TotalAmount > QYAmount)
                     {
-                        string msg = string.Format("单据：{0},订货金额超出可用额度：{1}", requestDynamic["FBILLNO"], QYAmount);
+                        string msg = string.Format("单据：{0},订货金额:{2}超出可用额度:{1}", requestDynamic["BillNo"], QYAmount,TotalAmount);
                         var errInfo = new ValidationErrorInfo(
                                         item.BillNo,
                                         item.DataEntity["Id"].ToString(),
@@ -73,13 +74,13 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
                         validateContext.AddError(item.DataEntity, errInfo);
                     }
                 }
-                else if (Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals("MD") && Convert.ToString(((DynamicObject)requestDynamic["FORGTYPE"])["Number"]).Equals("MD"))
+                 if (Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals("MD01") && Convert.ToString(((DynamicObject)requestDynamic["FORGTYPE"])["Number"]).Equals("MD01"))
                 {
-                    double FBILLALLAMOUNT = Convert.ToDouble(requestDynamic["FBILLALLAMOUNT"]);
-                    double MDAmount = XSXServiceHelper.XSXServiceHelper.GetMDAmount(this.Context, Convert.ToInt64(((DynamicObject)requestDynamic["FApplyCust"])["Id"]));
-                    if (FBILLALLAMOUNT > MDAmount)
+                    double TotalAmount = Convert.ToDouble(requestDynamic["TotalAmount"]);
+                    double MDAmount = XSXServiceHelper.XSXServiceHelper.GetMDAmount(this.Context, Convert.ToString(((DynamicObject)requestDynamic["FApplyCust"])["Number"]), Convert.ToInt64(((DynamicObject)requestDynamic["FApplyCust"])["Id"]));
+                    if (TotalAmount > MDAmount)
                     {
-                        string msg = string.Format("单据：{0},订货金额超出可用额度：{1}", requestDynamic["FBILLNO"], MDAmount);
+                        string msg = string.Format("单据：{0},订货金额:{2}超出可用额度:{1}", requestDynamic["BillNo"], MDAmount,TotalAmount);
                         var errInfo = new ValidationErrorInfo(
                                         item.BillNo,
                                         item.DataEntity["Id"].ToString(),

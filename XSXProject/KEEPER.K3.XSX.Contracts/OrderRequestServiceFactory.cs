@@ -66,7 +66,7 @@ namespace KEEPER.K3.XSX.Contracts
 
             ////增加对应的接口与实现类的对应关系
 
-            _mapServer.Add(typeof(ICustomerService), "KEEPER.K3.App.OrderRequestService,KEEPER.K3.App");
+            _mapServer.Add(typeof(IOrderRequestService), "KEEPER.K3.App.OrderRequestService,KEEPER.K3.App");
 
             //这句话放到最后
             noRegistered = false;

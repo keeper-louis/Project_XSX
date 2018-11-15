@@ -49,20 +49,20 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
                         if (Convert.ToString(OrgType["Number"]).EqualsIgnoreCase("PP"))
                         {
                             //客户类型是门店，门店加盟费******根据实际编码进行修改******
-                            if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("MD"))
+                            if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("MD01"))
                             {
-                                //门店加盟费 ID:108872	No:SFKYT001,******根据实际编码进行修改******
-                                DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 108872);//服务端获取收付款用途对象
+                                //门店加盟费 ID:113486	No:005,******根据实际编码进行修改******
+                                DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 113486);//服务端获取收付款用途对象
                                 ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID"] = ReceivePurposeObject;
-                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 108872;
+                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 113486;
                             }
                             //客户类型是区域，区域加盟费******根据实际编码进行修改******
                             if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("QY"))
                             {
-                                //区域加盟费ID:108873	No:SFKYT002 ,******根据实际编码进行修改******
-                                DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 108873);//服务端获取收付款用途对象
+                                //区域加盟费ID:107586	No:100 ,******根据实际编码进行修改******
+                                DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 107586);//服务端获取收付款用途对象
                                 ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID"] = ReceivePurposeObject;
-                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 108873;
+                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 107586;
                             }
                         }
 
@@ -70,20 +70,20 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
                         if (Convert.ToString(OrgType["Number"]).EqualsIgnoreCase("SC"))
                         {
                             //客户类型是门店，订货货款******根据实际编码进行修改******
-                            if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("MD"))
+                            if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("MD01"))
                             {
-                                //订货货款ID:108874	No:SFKYT003 ,******根据实际编码进行修改******
-                                DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 108874);//服务端获取收付款用途对象
+                                //订货货款ID:107610	No:400 ,******根据实际编码进行修改******
+                                DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 107610);//服务端获取收付款用途对象
                                 ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID"] = ReceivePurposeObject;
-                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 108874;
+                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 107610;
                             }
                             //客户类型是区域，订货保证金******根据实际编码进行修改******
                             if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("QY"))
                             {
-                                //订货保证金ID:108875	No:SFKYT004 ,******根据实际编码进行修改******
-                                DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 108875);//服务端获取收付款用途对象
+                                //订货保证金ID:107608	No:300 ,******根据实际编码进行修改******
+                                DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 107608);//服务端获取收付款用途对象
                                 ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID"] = ReceivePurposeObject;
-                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 108875;
+                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 107608;
                             }
                         }
                     }
@@ -98,7 +98,7 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
         {
             base.EndOperationTransaction(e);
             /*只取第一行判断，会造成现象，有的单据能自动提交审核，有的单据不会*/
-            object[] ids = (from p in e.DataEntitys.Where(p=> !(((DynamicObject)(((DynamicObjectCollection)p["RECEIVEBILLENTRY"])[0])["PURPOSEID"])["Number"].Equals("SFKYT001")||((DynamicObject)(((DynamicObjectCollection)p["RECEIVEBILLENTRY"])[0])["PURPOSEID"])["Number"].Equals("SFKYT002")))
+            object[] ids = (from p in e.DataEntitys.Where(p=> !(((DynamicObject)(((DynamicObjectCollection)p["RECEIVEBILLENTRY"])[0])["PURPOSEID"])["Number"].Equals("005")||((DynamicObject)(((DynamicObjectCollection)p["RECEIVEBILLENTRY"])[0])["PURPOSEID"])["Number"].Equals("100")))
                                 select p[0]).ToArray();//获取收付款用途不等于加盟费的单据ID
             IOperationResult submitResult = XSXServiceHelper.XSXServiceHelper.Submit(this.Context, "AR_RECEIVEBILL",ids);
             XSXServiceHelper.XSXServiceHelper.Log(this.Context, "Submit", submitResult);

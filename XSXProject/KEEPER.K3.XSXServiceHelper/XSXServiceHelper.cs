@@ -125,10 +125,10 @@ namespace KEEPER.K3.XSXServiceHelper
         /// <param name="ctx"></param>
         /// <param name="custID"></param>
         /// <returns></returns>
-        public static double GetQYAmount(Context ctx,long custID)
+        public static double GetQYAmount(Context ctx,string custNo,long custID)
         {
             IOrderRequestService service = OrderRequestServiceFactory.GetService<IOrderRequestService>(ctx);
-            double QYAmount = service.GetQYAmount(ctx, custID);
+            double QYAmount = service.GetQYAmount(ctx, custNo,custID);
             return QYAmount;
         }
 
@@ -138,10 +138,10 @@ namespace KEEPER.K3.XSXServiceHelper
         /// <param name="ctx"></param>
         /// <param name="custID"></param>
         /// <returns></returns>
-        public static double GetMDAmount(Context ctx, long custID)
+        public static double GetMDAmount(Context ctx, string custNo,long custID)
         {
             IOrderRequestService service = OrderRequestServiceFactory.GetService<IOrderRequestService>(ctx);
-            double MDAmount = service.GetMDAmount(ctx, custID);
+            double MDAmount = service.GetMDAmount(ctx, custNo,custID);
             return MDAmount;
         }
     }

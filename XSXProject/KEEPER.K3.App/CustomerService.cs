@@ -23,7 +23,7 @@ namespace KEEPER.K3.App
         {
             //FCUSTTYPEID = 81f12c96310b47b0b9e1b5f7298250b8 客户类别内部结算客户
             Customer cust = new Customer();
-            string strSql = string.Format(@"SELECT cust.fcustid,cust.FBELONGCUST FBELONGCUST,
+            string strSql = string.Format(@"SELECT cust.fcustid,cust.fnumber custNo,cust.FBELONGCUST FBELONGCUST,
        ccust.FNUMBER ccustFNUMBER,
        cust.FCUSTTYPE FCUSTTYPE,
        custtype.FNUMBER custtypeFFNUMBER,
@@ -40,6 +40,7 @@ namespace KEEPER.K3.App
                 while (reader.Read())
                 {
                     cust.custID = Convert.ToInt64(reader["fcustid"]);//客户ID
+                    cust.custNo = Convert.ToString(reader["custNo"]);//客户编码
                     cust.BelongCustID = Convert.ToInt64(reader["FBELONGCUST"]);//所属区域ID
                     cust.BelongCustNo = Convert.ToString(reader["ccustFNUMBER"]);//所属区域编码
                     cust.CustTypeID = Convert.ToInt64(reader["FCUSTTYPE"]);//客户类别ID
@@ -52,7 +53,7 @@ namespace KEEPER.K3.App
 
         public Customer GetIntCustomerProperty(Context ctx, long orgID)
         {
-            string strSql = string.Format(@"/*dialect*/SELECT FCUSTID FROM T_BD_CUSTOMER WHERE FCORRESPONDORGID = {0}", orgID);
+            string strSql = string.Format(@"/*dialect*/SELECT FCUSTID FROM T_BD_CUSTOMER WHERE FCORRESPONDORGID = {0} and FUSEORGID = {1}", orgID,orgID);
             long custId = DBUtils.ExecuteScalar<long>(ctx, strSql, -1, null);
             if (custId!=-1)
             {
