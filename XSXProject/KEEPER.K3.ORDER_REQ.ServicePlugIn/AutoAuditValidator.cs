@@ -61,7 +61,7 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
                     double QYAmount = XSXServiceHelper.XSXServiceHelper.GetQYAmount(this.Context, Convert.ToString(((DynamicObject)requestDynamic["FApplyCust"])["Number"]), Convert.ToInt64(((DynamicObject)requestDynamic["FApplyCust"])["Id"]));
                     if (TotalAmount > QYAmount)
                     {
-                        string msg = string.Format("单据：{0},订货金额:{2}超出可用额度:{1}", requestDynamic["BillNo"], QYAmount,TotalAmount);
+                        string msg = string.Format("单据：{0},订货金额:{2}超出可用额度:{1}", requestDynamic["BillNo"], QYAmount,TotalAmount- QYAmount);
                         var errInfo = new ValidationErrorInfo(
                                         item.BillNo,
                                         item.DataEntity["Id"].ToString(),
@@ -80,7 +80,7 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
                     double MDAmount = XSXServiceHelper.XSXServiceHelper.GetMDAmount(this.Context, Convert.ToString(((DynamicObject)requestDynamic["FApplyCust"])["Number"]), Convert.ToInt64(((DynamicObject)requestDynamic["FApplyCust"])["Id"]));
                     if (TotalAmount > MDAmount)
                     {
-                        string msg = string.Format("单据：{0},订货金额:{2}超出可用额度:{1}", requestDynamic["BillNo"], MDAmount,TotalAmount);
+                        string msg = string.Format("单据：{0},订货金额:{2}超出可用额度:{1}", requestDynamic["BillNo"], MDAmount,TotalAmount- MDAmount);
                         var errInfo = new ValidationErrorInfo(
                                         item.BillNo,
                                         item.DataEntity["Id"].ToString(),
