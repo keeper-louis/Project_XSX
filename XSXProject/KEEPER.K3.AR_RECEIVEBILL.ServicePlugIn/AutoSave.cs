@@ -35,57 +35,61 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
                     string WLUnitsType = Convert.ToString(DataEntity["CONTACTUNITTYPE"]);//往来单位类型
                     if (WLUnitsType.EqualsIgnoreCase("BD_Customer"))
                     {
-                        Customer cust = XSXServiceHelper.XSXServiceHelper.GetCustomerProperty(this.Context, Convert.ToInt64(DataEntity["CONTACTUNIT_Id"]));
-                        DynamicObject BelongCust = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "BD_Customer",cust.BelongCustID);//服务端获取所属区域对象
-                        DynamicObject CustType = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "PAEZ_CUSTTYPE", cust.CustTypeID);//服务端获取所属区域对象//客户类别
-                        DynamicObject OrgType = ((DynamicObject)DataEntity["FPAYORGID"])["FORGTYPE"] as DynamicObject;//组织类型
-                        DataEntity["FBelongCust"] = BelongCust;
-                        DataEntity["FBelongCust_Id"] = cust.BelongCustID;
-                        DataEntity["FCUSTTYPE"] = CustType;
-                        DataEntity["FCUSTTYPE_Id"] = cust.CustTypeID;
-                        DataEntity["FORGTYPE"] = OrgType;
-                        DataEntity["FORGTYPE_Id"] = Convert.ToInt64(OrgType["Id"]);
-                        //组织类型是品牌,******根据实际编码进行修改******
-                        if (Convert.ToString(OrgType["Number"]).EqualsIgnoreCase("PP"))
+                        if (!XSXServiceHelper.XSXServiceHelper.IsJXCust(this.Context, Convert.ToInt64(DataEntity["CONTACTUNIT_Id"])))
                         {
-                            //客户类型是门店，门店加盟费******根据实际编码进行修改******
-                            if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("MD01"))
+                            Customer cust = XSXServiceHelper.XSXServiceHelper.GetCustomerProperty(this.Context, Convert.ToInt64(DataEntity["CONTACTUNIT_Id"]));
+                            DynamicObject BelongCust = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "BD_Customer", cust.BelongCustID);//服务端获取所属区域对象
+                            DynamicObject CustType = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "PAEZ_CUSTTYPE", cust.CustTypeID);//服务端获取所属区域对象//客户类别
+                            DynamicObject OrgType = ((DynamicObject)DataEntity["FPAYORGID"])["FORGTYPE"] as DynamicObject;//组织类型
+                            DataEntity["FBelongCust"] = BelongCust;
+                            DataEntity["FBelongCust_Id"] = cust.BelongCustID;
+                            DataEntity["FCUSTTYPE"] = CustType;
+                            DataEntity["FCUSTTYPE_Id"] = cust.CustTypeID;
+                            DataEntity["FORGTYPE"] = OrgType;
+                            DataEntity["FORGTYPE_Id"] = Convert.ToInt64(OrgType["Id"]);
+                            //组织类型是品牌,******根据实际编码进行修改******
+                            if (Convert.ToString(OrgType["Number"]).EqualsIgnoreCase("PP"))
                             {
-                                //门店加盟费 ID:113486	No:005,******根据实际编码进行修改******
-                                DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 113486);//服务端获取收付款用途对象
-                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID"] = ReceivePurposeObject;
-                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 113486;
+                                //客户类型是门店，门店加盟费******根据实际编码进行修改******
+                                if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("MD01"))
+                                {
+                                    //门店加盟费 ID:113486	No:005,******根据实际编码进行修改******
+                                    DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 113486);//服务端获取收付款用途对象
+                                    ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID"] = ReceivePurposeObject;
+                                    ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 113486;
+                                }
+                                //客户类型是区域，区域加盟费******根据实际编码进行修改******
+                                if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("QY"))
+                                {
+                                    //区域加盟费ID:107586	No:100 ,******根据实际编码进行修改******
+                                    DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 107586);//服务端获取收付款用途对象
+                                    ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID"] = ReceivePurposeObject;
+                                    ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 107586;
+                                }
                             }
-                            //客户类型是区域，区域加盟费******根据实际编码进行修改******
-                            if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("QY"))
-                            {
-                                //区域加盟费ID:107586	No:100 ,******根据实际编码进行修改******
-                                DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 107586);//服务端获取收付款用途对象
-                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID"] = ReceivePurposeObject;
-                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 107586;
-                            }
-                        }
 
-                        //组织类型是生产公司******根据实际编码进行修改******
-                        if (Convert.ToString(OrgType["Number"]).EqualsIgnoreCase("SC"))
-                        {
-                            //客户类型是门店，订货货款******根据实际编码进行修改******
-                            if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("MD01"))
+                            //组织类型是生产公司******根据实际编码进行修改******
+                            if (Convert.ToString(OrgType["Number"]).EqualsIgnoreCase("SC"))
                             {
-                                //订货货款ID:107610	No:400 ,******根据实际编码进行修改******
-                                DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 107610);//服务端获取收付款用途对象
-                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID"] = ReceivePurposeObject;
-                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 107610;
-                            }
-                            //客户类型是区域，订货保证金******根据实际编码进行修改******
-                            if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("QY"))
-                            {
-                                //订货保证金ID:107608	No:300 ,******根据实际编码进行修改******
-                                DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 107608);//服务端获取收付款用途对象
-                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID"] = ReceivePurposeObject;
-                                ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 107608;
+                                //客户类型是门店，订货货款******根据实际编码进行修改******
+                                if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("MD01"))
+                                {
+                                    //订货货款ID:107610	No:400 ,******根据实际编码进行修改******
+                                    DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 107610);//服务端获取收付款用途对象
+                                    ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID"] = ReceivePurposeObject;
+                                    ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 107610;
+                                }
+                                //客户类型是区域，订货保证金******根据实际编码进行修改******
+                                if (Convert.ToString(CustType["Number"]).EqualsIgnoreCase("QY"))
+                                {
+                                    //订货保证金ID:107608	No:300 ,******根据实际编码进行修改******
+                                    DynamicObject ReceivePurposeObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "CN_RECPAYPURPOSE", 107608);//服务端获取收付款用途对象
+                                    ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID"] = ReceivePurposeObject;
+                                    ((DynamicObjectCollection)DataEntity["RECEIVEBILLENTRY"])[0]["PURPOSEID_Id"] = 107608;
+                                }
                             }
                         }
+                        
                     }
                 }
             }
@@ -97,8 +101,9 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
         public override void EndOperationTransaction(EndOperationTransactionArgs e)
         {
             base.EndOperationTransaction(e);
+            
             /*只取第一行判断，会造成现象，有的单据能自动提交审核，有的单据不会*/
-            object[] ids = (from p in e.DataEntitys.Where(p=> !(((DynamicObject)(((DynamicObjectCollection)p["RECEIVEBILLENTRY"])[0])["PURPOSEID"])["Number"].Equals("005")||((DynamicObject)(((DynamicObjectCollection)p["RECEIVEBILLENTRY"])[0])["PURPOSEID"])["Number"].Equals("100")))
+            object[] ids = (from p in e.DataEntitys.Where(p=> !(((DynamicObject)(((DynamicObjectCollection)p["RECEIVEBILLENTRY"])[0])["PURPOSEID"])["Number"].Equals("005")||((DynamicObject)(((DynamicObjectCollection)p["RECEIVEBILLENTRY"])[0])["PURPOSEID"])["Number"].Equals("100")||Convert.ToInt64(p["FCUSTTYPE_Id"])==0))
                                 select p[0]).ToArray();//获取收付款用途不等于加盟费的单据ID
             IOperationResult submitResult = XSXServiceHelper.XSXServiceHelper.Submit(this.Context, "AR_RECEIVEBILL",ids);
             XSXServiceHelper.XSXServiceHelper.Log(this.Context, "Submit", submitResult);

@@ -38,5 +38,16 @@ namespace KEEPER.K3.XSX.Contracts
         Customer GetIntCustomerProperty(Context ctx, long orgID);
 
 
+        /// <summary>
+        /// 判断是否是吉祥客户
+        /// </summary>
+        /// <param name="ctx">上下文</param>
+        /// <param name="custID">对应组织ID</param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(ServiceFault))]
+        bool IsJXCust(Context ctx, long orgID);
+
+
     }
 }

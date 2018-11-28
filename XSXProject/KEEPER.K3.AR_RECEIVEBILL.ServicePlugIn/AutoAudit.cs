@@ -31,37 +31,44 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
             {
                 foreach (DynamicObject DataEntity in e.DataEntitys)
                 {
-                    orgNumber = Convert.ToString(((DynamicObject)DataEntity["FPAYORGID"])["Number"]);
-                    belongCustNumbaer = Convert.ToString(((DynamicObject)DataEntity["FBelongCust"])["Number"]);
-                    long BillID = Convert.ToInt64(DataEntity["Id"]);
-                    //收款用途，门店加盟费的ID：113486,******根据实际编码进行修改******
-                    string strSql = string.Format(@"/*dialect*/SELECT COUNT(*) NUM FROM T_AR_RECEIVEBILL AR INNER JOIN T_AR_RECEIVEBILLENTRY ARY ON AR.FID = ARY.FID WHERE ARY.FPURPOSEID = 113486 AND AR.FID = {0}", BillID);
-                    int num = DBUtils.ExecuteScalar<int>(this.Context, strSql, -1, null);
-                    //收付款用途：xx加盟费，客户类型=门店
-                    if (num>=1)//生成费用申请单
+                    if (Convert.ToString(DataEntity["CONTACTUNITTYPE"]).Equals("BD_Customer"))
                     {
-                        Action<IDynamicFormViewService> fillBillPropertys = new Action<IDynamicFormViewService>(fillPropertys);
-                        DynamicObject billModel = XSXServiceHelper.XSXServiceHelper.CreateBillMode(this.Context, "ER_ExpenseRequest", fillBillPropertys);
-                        IOperationResult saveResult = XSXServiceHelper.XSXServiceHelper.Save(this.Context, "ER_ExpenseRequest", billModel);
-                        XSXServiceHelper.XSXServiceHelper.Log(this.Context, "Save", saveResult);
-                        if (!saveResult.IsSuccess)
+                        if (!XSXServiceHelper.XSXServiceHelper.IsJXCust(this.Context, Convert.ToInt64(DataEntity["CONTACTUNIT_Id"])))
                         {
-                            StringBuilder sb = new StringBuilder();
-                            sb.AppendLine("自动创建费用申请单失败原因：");
-                            foreach (var operateResult in saveResult.OperateResult)
+                            orgNumber = Convert.ToString(((DynamicObject)DataEntity["FPAYORGID"])["Number"]);
+                            belongCustNumbaer = Convert.ToString(((DynamicObject)DataEntity["FBelongCust"])["Number"]);
+                            long BillID = Convert.ToInt64(DataEntity["Id"]);
+                            //收款用途，门店加盟费的ID：113486,******根据实际编码进行修改******
+                            string strSql = string.Format(@"/*dialect*/SELECT COUNT(*) NUM FROM T_AR_RECEIVEBILL AR INNER JOIN T_AR_RECEIVEBILLENTRY ARY ON AR.FID = ARY.FID WHERE ARY.FPURPOSEID = 113486 AND AR.FID = {0}", BillID);
+                            int num = DBUtils.ExecuteScalar<int>(this.Context, strSql, -1, null);
+                            //收付款用途：xx加盟费，客户类型=门店
+                            if (num >= 1)//生成费用申请单
                             {
-                                sb.AppendLine(operateResult.Message);
+                                Action<IDynamicFormViewService> fillBillPropertys = new Action<IDynamicFormViewService>(fillPropertys);
+                                DynamicObject billModel = XSXServiceHelper.XSXServiceHelper.CreateBillMode(this.Context, "ER_ExpenseRequest", fillBillPropertys);
+                                IOperationResult saveResult = XSXServiceHelper.XSXServiceHelper.Save(this.Context, "ER_ExpenseRequest", billModel);
+                                XSXServiceHelper.XSXServiceHelper.Log(this.Context, "Save", saveResult);
+                                if (!saveResult.IsSuccess)
+                                {
+                                    StringBuilder sb = new StringBuilder();
+                                    sb.AppendLine("自动创建费用申请单失败原因：");
+                                    foreach (var operateResult in saveResult.OperateResult)
+                                    {
+                                        sb.AppendLine(operateResult.Message);
+                                    }
+                                    throw new KDBusinessException("AutoOperate", sb.ToString());
+                                }
+                                if (saveResult.IsSuccess)
+                                {
+                                    //反写"已生成费用申请单"，并反写单据编号
+                                    string costRequestNum = saveResult.OperateResult[0].Number;
+                                    string updateSql = string.Format(@"/*dialect*/Update T_AR_RECEIVEBILL set FISCREATEAPPLY = 1,FCOSTAPPLYNO = '{0}' where FID = {1}", costRequestNum, BillID);
+                                    DBUtils.Execute(this.Context, updateSql);
+                                }
                             }
-                            throw new KDBusinessException("AutoOperate", sb.ToString());
-                        }
-                        if (saveResult.IsSuccess)
-                        {
-                            //反写"已生成费用申请单"，并反写单据编号
-                            string costRequestNum = saveResult.OperateResult[0].Number;
-                            string updateSql = string.Format(@"/*dialect*/Update T_AR_RECEIVEBILL set FISCREATEAPPLY = 1,FCOSTAPPLYNO = '{0}' where FID = {1}", costRequestNum,BillID);
-                            DBUtils.Execute(this.Context, updateSql);
                         }
                     }
+                    
                 }
             }
         }

@@ -14,6 +14,20 @@ namespace KEEPER.K3.XSXServiceHelper
 {
     public class XSXServiceHelper
     {
+
+        /// <summary>
+        /// 判断是否是吉祥门店
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="custID"></param>
+        /// <returns></returns>
+        public static bool IsJXCust(Context ctx, long custID)
+        {
+            ICustomerService service = CustomerServiceFactory.GetService<ICustomerService>(ctx);
+            bool reuslt = service.IsJXCust(ctx, custID);
+            return reuslt;
+        }
+
         /// <summary>
         /// 获取客户属性
         /// </summary>

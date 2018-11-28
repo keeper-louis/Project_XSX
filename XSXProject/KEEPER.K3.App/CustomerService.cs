@@ -65,5 +65,25 @@ namespace KEEPER.K3.App
                 return null;
             }
         }
+
+        /// <summary>
+        /// 判断是否是吉祥门店客户
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="custID"></param>
+        /// <returns></returns>
+        public bool IsJXCust(Context ctx, long custID)
+        {
+            string strSql = string.Format(@"/*dialect*/select custtype.FNUMBER from T_BD_CUSTOMER cust inner join T_KEEPER_CUSTTYPE custtype on cust.FCUSTTYPE = custtype.FID where cust.FCUSTID = {0}", custID);
+            string custtype = DBUtils.ExecuteScalar<string>(ctx, strSql, "noResult", null);
+            if (custtype.Equals("noResult")||custtype.Equals("MD02"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }
