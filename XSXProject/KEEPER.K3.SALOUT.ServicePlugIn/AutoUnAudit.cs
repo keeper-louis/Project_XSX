@@ -15,8 +15,14 @@ namespace KEEPER.K3.SALOUT.ServicePlugIn
         public override void OnPreparePropertys(PreparePropertysEventArgs e)
         {
             base.OnPreparePropertys(e);
-            e.FieldKeys.Add("FIsCreateApply");
-            e.FieldKeys.Add("FCostApplyNo");
+            e.FieldKeys.Add("FIsCreateApply");//是否生成佣金申请
+            e.FieldKeys.Add("FCostApplyNo");//佣金申请单号
+            e.FieldKeys.Add("FISCREATEOTHERAP");//是否生成其他应付单
+            e.FieldKeys.Add("FOTHERAPNO");//其他应付单号
+            e.FieldKeys.Add("FISCREATEBOUNS");//是否生成提点申请单
+            e.FieldKeys.Add("FBOUNSAPPLYBILLNO");//提点申请单号
+            e.FieldKeys.Add("FISCREATELOGISTICS");//是否生成管销申请单
+            e.FieldKeys.Add("FLOGISTICSAPPLYBILLNO");//管销申请单号
         }
         public override void OnAddValidators(AddValidatorsEventArgs e)
         {

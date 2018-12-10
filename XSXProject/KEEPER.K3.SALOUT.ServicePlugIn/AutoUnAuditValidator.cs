@@ -23,14 +23,18 @@ namespace KEEPER.K3.SALOUT.ServicePlugIn
             foreach (ExtendedDataEntity item in dataEntities)
             {
                 DynamicObject requestDynamic = item.DataEntity;
-                bool isCreate = Convert.ToBoolean(requestDynamic["FIsCreateApply"]);//是否生成费用申请单
-                string billNo = Convert.ToString(requestDynamic["BillNo"]);//配送出库单单号
-                string costReqBillNo = Convert.ToString(requestDynamic["FCostApplyNo"]);//费用申请单单号
-               // DynamicObjectCollection Entry = requestDynamic["RECEIVEBILLENTRY"] as DynamicObjectCollection;
-               // string PurPoseNum = Convert.ToString(((DynamicObject)Entry[0]["PURPOSEID"])["Number"]);//门店加盟费：SFKYT001
-               // if (PurPoseNum.Equals("SFKYT001") && isCreate)
-                //{
-                    string msg = string.Format("单据：{0}配送出库单,已生成费用申请单：{1},不允许反审核", billNo, costReqBillNo);
+                bool isCreate = Convert.ToBoolean(requestDynamic["FIsCreateApply"]);//是否生成佣金费用申请单
+                string costReqBillNo = Convert.ToString(requestDynamic["FCostApplyNo"]);//佣金费用申请单单号
+                bool ISCREATEOTHERAP = Convert.ToBoolean(requestDynamic["FISCREATEOTHERAP"]);//是否生成其他应付单
+                string OTHERAPNO = Convert.ToString(requestDynamic["FOTHERAPNO"]);//其他应付单号
+                bool ISCREATEBOUNS = Convert.ToBoolean(requestDynamic["FISCREATEBOUNS"]);//是否生成提点申请单
+                string BOUNSAPPLYBILLNO = Convert.ToString(requestDynamic["FBOUNSAPPLYBILLNO"]);//提点申请单号
+                bool ISCREATELOGISTICS = Convert.ToBoolean(requestDynamic["FISCREATELOGISTICS"]);//是否生成管销申请单
+                string LOGISTICSAPPLYBILLNO = Convert.ToString(requestDynamic["FLOGISTICSAPPLYBILLNO"]);//管销申请单号
+                string billNo = Convert.ToString(requestDynamic["BillNo"]);
+                if (isCreate||ISCREATEOTHERAP||ISCREATEBOUNS||ISCREATELOGISTICS)
+                {
+                    string msg = string.Format("单据：{0}配送出库单,已生成下游单据,不允许反审核,具体信息见单据资金池页签", billNo);
                     var errInfo = new ValidationErrorInfo(
                                     item.BillNo,
                                     item.DataEntity["Id"].ToString(),
@@ -41,9 +45,7 @@ namespace KEEPER.K3.SALOUT.ServicePlugIn
                                     " ",
                                     Kingdee.BOS.Core.Validation.ErrorLevel.Error);
                     validateContext.AddError(item.DataEntity, errInfo);
-
-                
-
+                }
             }
         }
     }

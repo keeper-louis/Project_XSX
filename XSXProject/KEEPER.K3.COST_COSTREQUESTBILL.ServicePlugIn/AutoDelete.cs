@@ -24,7 +24,7 @@ namespace KEEPER.K3.COST_COSTREQUESTBILL.ServicePlugIn
                 {
                     string billNo = Convert.ToString(dataEntity["BillNo"]);
                     //配送出库单查询
-                    string SALSql = string.Format(@"/*dialect*/SELECT COUNT(*) SALNUM FROM T_SAL_OUTSTOCK WHERE FCOSTAPPLYNO = '{0}' AND FISCREATEAPPLY = 1", billNo);
+                    string SALSql = string.Format(@"/*dialect*/SELECT COUNT(*) SALNUM FROM T_SAL_OUTSTOCK WHERE FCOSTAPPLYNO = '{0}' or FBOUNSAPPLYBILLNO = '{0}' or FLOGISTICSAPPLYBILLNO = '{0}'", billNo);
                     int SALNum = DBUtils.ExecuteScalar<int>(this.Context, SALSql, -1, null);
                     if (SALNum == 0)
                     {
@@ -39,8 +39,15 @@ namespace KEEPER.K3.COST_COSTREQUESTBILL.ServicePlugIn
                     }
                     else
                     {
-                        string updateSALSql = string.Format(@"/*dialect*/UPDATE T_SAL_OUTSTOCK set FCOSTAPPLYNO = ' ',FISCREATEAPPLY = 0 WHERE FCOSTAPPLYNO = '{0}' AND FISCREATEAPPLY = 1", billNo);
-                        DBUtils.Execute(this.Context, updateSALSql);
+                        string updateSALSql1 = string.Format(@"/*dialect*/UPDATE T_SAL_OUTSTOCK set FCOSTAPPLYNO = ' ',FISCREATEAPPLY = 0 WHERE FCOSTAPPLYNO = '{0}' AND FISCREATEAPPLY = 1", billNo);
+                        string updateSALSql2 = string.Format(@"/*dialect*/UPDATE T_SAL_OUTSTOCK set FBOUNSAPPLYBILLNO = ' ',FISCREATEBOUNS = 0 WHERE FBOUNSAPPLYBILLNO = '{0}' AND FISCREATEBOUNS = 1", billNo);
+                        string updateSALSql3 = string.Format(@"/*dialect*/UPDATE T_SAL_OUTSTOCK set FLOGISTICSAPPLYBILLNO = ' ',FISCREATELOGISTICS = 0 WHERE FLOGISTICSAPPLYBILLNO = '{0}' AND FISCREATELOGISTICS = 1", billNo);
+                        List<string> sql = new List<string>();
+                        sql.Add(updateSALSql1);
+                        sql.Add(updateSALSql2);
+                        sql.Add(updateSALSql3);
+                        DBUtils.ExecuteBatch(this.Context, sql,3);
+                        //DBUtils.Execute(this.Context, updateSALSql);
                     }
                 }
             }
