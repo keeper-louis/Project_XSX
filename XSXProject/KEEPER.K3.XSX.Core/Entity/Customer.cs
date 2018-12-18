@@ -39,5 +39,21 @@ namespace KEEPER.K3.XSX.Core.Entity
         /// 额外提点
         /// </summary>
         public double Proportions { get; set; }
+        /// <summary>
+        /// 所属品牌ID
+        /// </summary>
+        public long BrandID { get; set; }
+        /// <summary>
+        /// 所属品牌编码
+        /// </summary>
+        public string BrandNo { get; set; }
+        /// <summary>
+        /// 所属大区ID
+        /// </summary>
+        public long RegionID { get; set; }
+        /// <summary>
+        /// 所属大区编码
+        /// </summary>
+        public string RegionNo { get; set; }
     }
 }

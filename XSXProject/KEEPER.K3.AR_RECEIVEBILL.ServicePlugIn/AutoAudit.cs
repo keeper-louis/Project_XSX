@@ -11,6 +11,7 @@ using Kingdee.BOS.App.Data;
 using Kingdee.BOS.Core.DynamicForm;
 using Kingdee.BOS.Core.Bill;
 using Kingdee.BOS;
+using KEEPER.K3.XSX.Core.ParamOption;
 
 namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
 {
@@ -19,10 +20,17 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
     {
         private string orgNumber = string.Empty;
         private string belongCustNumbaer = string.Empty;
+        //private string ywlxTypeNo = string.Empty;
+        private string shBrandNo = string.Empty;
+        private string shRegion = string.Empty;
+
         public override void OnPreparePropertys(PreparePropertysEventArgs e)
         {
             base.OnPreparePropertys(e);
             e.FieldKeys.Add("FBelongCust");
+            e.FieldKeys.Add("FYWTYPE");
+            e.FieldKeys.Add("FSHBRAND");
+            e.FieldKeys.Add("FSHREGION");
         }
         public override void EndOperationTransaction(EndOperationTransactionArgs e)
         {
@@ -33,16 +41,17 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
                 {
                     if (Convert.ToString(DataEntity["CONTACTUNITTYPE"]).Equals("BD_Customer"))
                     {
-                        if (!XSXServiceHelper.XSXServiceHelper.IsJXCust(this.Context, Convert.ToInt64(DataEntity["CONTACTUNIT_Id"])))
+                        if (XSXServiceHelper.XSXServiceHelper.IsYQYCust(this.Context, Convert.ToInt64(DataEntity["CONTACTUNIT_Id"])))
                         {
                             orgNumber = Convert.ToString(((DynamicObject)DataEntity["FPAYORGID"])["Number"]);
                             belongCustNumbaer = Convert.ToString(((DynamicObject)DataEntity["FBelongCust"])["Number"]);
+                            //门店加盟费业务类型为空
+                            //ywlxTypeNo = Convert.ToString(((DynamicObject)DataEntity["FYWTYPE"])["Number"]);
+                            shBrandNo = Convert.ToString(((DynamicObject)DataEntity["FSHBRAND"])["Number"]);
+                            shRegion = Convert.ToString(((DynamicObject)DataEntity["FSHREGION"])["Number"]);
                             long BillID = Convert.ToInt64(DataEntity["Id"]);
-                            //收款用途，门店加盟费的ID：113486,******根据实际编码进行修改******
-                            string strSql = string.Format(@"/*dialect*/SELECT COUNT(*) NUM FROM T_AR_RECEIVEBILL AR INNER JOIN T_AR_RECEIVEBILLENTRY ARY ON AR.FID = ARY.FID WHERE ARY.FPURPOSEID = 113486 AND AR.FID = {0}", BillID);
-                            int num = DBUtils.ExecuteScalar<int>(this.Context, strSql, -1, null);
-                            //收付款用途：xx加盟费，客户类型=门店
-                            if (num >= 1)//生成费用申请单
+                            DynamicObjectCollection RECEIVEBILLENTRY = DataEntity["RECEIVEBILLENTRY"] as DynamicObjectCollection;
+                            if (Convert.ToInt64(RECEIVEBILLENTRY[0]["PURPOSEID_Id"])==ConstantBaseData.MDJMFID)
                             {
                                 Action<IDynamicFormViewService> fillBillPropertys = new Action<IDynamicFormViewService>(fillPropertys);
                                 DynamicObject billModel = XSXServiceHelper.XSXServiceHelper.CreateBillMode(this.Context, "ER_ExpenseRequest", fillBillPropertys);
@@ -66,6 +75,14 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
                                     DBUtils.Execute(this.Context, updateSql);
                                 }
                             }
+                            //收款用途，门店加盟费的ID：113486,******根据实际编码进行修改******
+                            //string strSql = string.Format(@"/*dialect*/SELECT COUNT(*) NUM FROM T_AR_RECEIVEBILL AR INNER JOIN T_AR_RECEIVEBILLENTRY ARY ON AR.FID = ARY.FID WHERE ARY.FPURPOSEID = 113486 AND AR.FID = {0}", BillID);
+                            //int num = DBUtils.ExecuteScalar<int>(this.Context, strSql, -1, null);
+                            //收付款用途：xx加盟费，客户类型=门店
+                            //if (num >= 1)//生成费用申请单
+                           // {
+                                
+                            //}
                         }
                     }
                     
@@ -93,6 +110,12 @@ namespace KEEPER.K3.AR_RECEIVEBILL.ServicePlugIn
             dynamicFormView.SetItemValueByNumber("FBelongCust", belongCustNumbaer, 0);
             //费用承担部门：固定值
             dynamicFormView.SetItemValueByNumber("FCostDeptID", "BM000017", 0);
+            //业务类型
+            //dynamicFormView.SetItemValueByNumber("FYWTYPE", ywlxTypeNo, 0);
+            //所属品牌
+            dynamicFormView.SetItemValueByNumber("FSHBRAND", shBrandNo, 0);
+            //所属大区
+            dynamicFormView.SetItemValueByNumber("FSHREGION", shRegion, 0);
             //分录
             //费用项目：固定值
             dynamicFormView.SetItemValueByNumber("FExpenseItemID", "100", 0);

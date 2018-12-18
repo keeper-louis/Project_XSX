@@ -70,6 +70,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\KEEPER.K3.XSX.Core\KEEPER.K3.XSX.Core.csproj">
+      <Project>{E0D87D6C-7C28-4557-A937-F3410E7B5BD6}</Project>
+      <Name>KEEPER.K3.XSX.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\KEEPER.K3.XSXServiceHelper\KEEPER.K3.XSXServiceHelper.csproj">
       <Project>{D49A3A2F-6CCA-4308-8193-A56A37A01D5C}</Project>
       <Name>KEEPER.K3.XSXServiceHelper</Name>

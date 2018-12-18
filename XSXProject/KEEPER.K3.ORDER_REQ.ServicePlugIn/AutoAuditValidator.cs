@@ -10,6 +10,7 @@ using Kingdee.BOS.Util;
 using Kingdee.BOS.Orm.DataEntity;
 using Kingdee.BOS.App.Data;
 using System.Data;
+using KEEPER.K3.XSX.Core.ParamOption;
 
 namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
 {
@@ -25,8 +26,58 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
             foreach (ExtendedDataEntity item in dataEntities)
             {
                 DynamicObject requestDynamic = item.DataEntity;
+                //有区域门店订货校验起订量
+                if ((Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals(ConstantBaseData.YQYMDNO) && Convert.ToInt64(((DynamicObject)requestDynamic["FYWTYPE"])["id"]) == ConstantBaseData.YQYMDDHID))
+                {
+                    double TotalAmount = Convert.ToDouble(requestDynamic["TotalAmount"]);
+                    if (TotalAmount < 1000)
+                    {
+                        string msg = string.Format("单据：{0},订货金额:{1}小于门店起订金额1000", requestDynamic["BillNo"], TotalAmount);
+                        var errInfo = new ValidationErrorInfo(
+                                        item.BillNo,
+                                        item.DataEntity["Id"].ToString(),
+                                        item.DataEntityIndex,
+                                        item.RowIndex,
+                                        "Valid019",
+                                        msg,
+                                        " ",
+                                        Kingdee.BOS.Core.Validation.ErrorLevel.Error);
+                        validateContext.AddError(item.DataEntity, errInfo);
+                    }
+                }
+
+                //有区域门店，订货可发量控制
+                if ((Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals(ConstantBaseData.YQYMDNO) && Convert.ToInt64(((DynamicObject)requestDynamic["FYWTYPE"])["id"]) == ConstantBaseData.YQYMDDHID))
+                {
+                    
+                    long custId = Convert.ToInt64(((DynamicObject)requestDynamic["FAPPLYCUST"])["Id"]);
+                    DynamicObjectCollection dyObjectCol = requestDynamic["FEntity"] as DynamicObjectCollection;
+                    foreach (DynamicObject dyObject in dyObjectCol)
+                    {
+                        long stockOrgId = Convert.ToInt64(((DynamicObject)dyObject["FDispatchOrgIdDetail"])["Id"]);
+                        long masterId = Convert.ToInt64(((DynamicObject)dyObject["MaterialId"])["msterID"]);
+                        double kfQty = XSXServiceHelper.XSXServiceHelper.GetKFQty(this.Context, stockOrgId, masterId, custId);
+                        double reqNum = Convert.ToDouble(dyObject["ReqQty"]);
+                        if (reqNum>kfQty)
+                        {
+                            string msg = string.Format("单据：{0},第{1}行申请数量：{2}超出库存可发量：{3},不允许进行订货", requestDynamic["BillNo"],dyObject["Seq"],reqNum,reqNum-kfQty);
+                            var errInfo = new ValidationErrorInfo(
+                                            item.BillNo,
+                                            item.DataEntity["Id"].ToString(),
+                                            item.DataEntityIndex,
+                                            item.RowIndex,
+                                            "Valid019",
+                                            msg,
+                                            " ",
+                                            Kingdee.BOS.Core.Validation.ErrorLevel.Error);
+                            validateContext.AddError(item.DataEntity, errInfo);
+                            continue;
+                        }
+                    }
+                }
+
                 //客户类别：区域：QY 
-                if (Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals("QY"))
+                if (Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals(ConstantBaseData.QYMDNO)&&Convert.ToInt64(((DynamicObject)requestDynamic["FYWTYPE"])["id"])== ConstantBaseData.QYDHID)
                 {
                     string strSql = string.Format(@"/*dialect*/select a.FBILLNO, b.FSEQ
   from T_SCMS_ApplyGools a
@@ -53,15 +104,17 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
                             validateContext.AddError(item.DataEntity, errInfo);
                             continue;
                         }
+                        reader.Close();
                     }
                 }
-                if (Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals("QY")&& Convert.ToString(((DynamicObject)requestDynamic["FORGTYPE"])["Number"]).Equals("QY"))
+                //区域可订货余额校验
+                if (Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals(ConstantBaseData.QYMDNO) && Convert.ToInt64(((DynamicObject)requestDynamic["FYWTYPE"])["id"]) == ConstantBaseData.QYDHID)
                 {
                     double TotalAmount = Convert.ToDouble(requestDynamic["TotalAmount"]);
-                    double QYAmount = XSXServiceHelper.XSXServiceHelper.GetQYAmount(this.Context, Convert.ToString(((DynamicObject)requestDynamic["FApplyCust"])["Number"]), Convert.ToInt64(((DynamicObject)requestDynamic["FApplyCust"])["Id"]));
+                    double QYAmount = XSXServiceHelper.XSXServiceHelper.GetQYAmount(this.Context, Convert.ToString(((DynamicObject)requestDynamic["FApplyCust"])["Number"]));
                     if (TotalAmount > QYAmount)
                     {
-                        string msg = string.Format("单据：{0},订货金额:{2}超出可用额度:{1}", requestDynamic["BillNo"], QYAmount,TotalAmount- QYAmount);
+                        string msg = string.Format("单据：{0},订货金额:{1}超出可用额度:{2}", requestDynamic["BillNo"], TotalAmount, TotalAmount- QYAmount);
                         var errInfo = new ValidationErrorInfo(
                                         item.BillNo,
                                         item.DataEntity["Id"].ToString(),
@@ -74,13 +127,34 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
                         validateContext.AddError(item.DataEntity, errInfo);
                     }
                 }
-                 if (Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals("MD01") && Convert.ToString(((DynamicObject)requestDynamic["FORGTYPE"])["Number"]).Equals("MD01"))
+                //有区域门店，无区域门店可订货余额检验
+                if ((Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals(ConstantBaseData.YQYMDNO) && Convert.ToInt64(((DynamicObject)requestDynamic["FYWTYPE"])["id"]) == ConstantBaseData.YQYMDDHID) || (Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals(ConstantBaseData.WQYMDNO) && Convert.ToInt64(((DynamicObject)requestDynamic["FYWTYPE"])["id"]) == ConstantBaseData.WQYMDDHID))
                 {
                     double TotalAmount = Convert.ToDouble(requestDynamic["TotalAmount"]);
                     double MDAmount = XSXServiceHelper.XSXServiceHelper.GetMDAmount(this.Context, Convert.ToString(((DynamicObject)requestDynamic["FApplyCust"])["Number"]), Convert.ToInt64(((DynamicObject)requestDynamic["FApplyCust"])["Id"]));
                     if (TotalAmount > MDAmount)
                     {
-                        string msg = string.Format("单据：{0},订货金额:{2}超出可用额度:{1}", requestDynamic["BillNo"], MDAmount,TotalAmount- MDAmount);
+                        string msg = string.Format("单据：{0},订货金额:{1}超出可用额度:{2}", requestDynamic["BillNo"], TotalAmount, TotalAmount- MDAmount);
+                        var errInfo = new ValidationErrorInfo(
+                                        item.BillNo,
+                                        item.DataEntity["Id"].ToString(),
+                                        item.DataEntityIndex,
+                                        item.RowIndex,
+                                        "Valid019",
+                                        msg,
+                                        " ",
+                                        Kingdee.BOS.Core.Validation.ErrorLevel.Error);
+                        validateContext.AddError(item.DataEntity, errInfo);
+                    }
+                }
+
+                if (Convert.ToInt64(((DynamicObject)requestDynamic["FYWTYPE"])["id"]) == ConstantBaseData.MDYJID && (Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals(ConstantBaseData.YQYMDNO)|| Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals(ConstantBaseData.WQYMDNO)))
+                {
+                    double TotalAmount = Convert.ToDouble(requestDynamic["TotalAmount"]);
+                    double YJAmount = XSXServiceHelper.XSXServiceHelper.GetYJAmount(this.Context, Convert.ToString(((DynamicObject)requestDynamic["FApplyCust"])["Number"]), Convert.ToInt64(((DynamicObject)requestDynamic["FApplyCust"])["Id"]));
+                    if (TotalAmount > YJAmount)
+                    {
+                        string msg = string.Format("单据：{0},订货金额:{1}超出营建可用额度:{2}", requestDynamic["BillNo"], TotalAmount, TotalAmount - YJAmount);
                         var errInfo = new ValidationErrorInfo(
                                         item.BillNo,
                                         item.DataEntity["Id"].ToString(),

@@ -90,6 +90,8 @@ namespace KEEPER.K3.XSX.Contracts
         DynamicObject installCostRequestPackage(Context ctx, string FormID,Action<IDynamicFormViewService> fillBillPropertys,string BillTypeId);
 
 
+        
+
         /// <summary>
         /// 获取Cloud系统时间
         /// </summary>

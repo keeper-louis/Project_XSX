@@ -24,7 +24,7 @@ namespace KEEPER.K3.XSX.Contracts
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(ServiceFault))]
-        Double GetQYAmount(Context ctx, string custNo,long custID);
+        Double GetQYAmount(Context ctx, string custNo);
 
         /// <summary>
         /// 获取门店客户要货申请可用额度
@@ -35,5 +35,27 @@ namespace KEEPER.K3.XSX.Contracts
         [OperationContract]
         [FaultContract(typeof(ServiceFault))]
         Double GetMDAmount(Context ctx, string custNo, long custID);
+
+        /// <summary>
+        /// 获取营建门店客户要货申请可用额度
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="custID"></param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(ServiceFault))]
+        Double GetYJAmount(Context ctx, string custNo, long custID);
+
+        /// <summary>
+        /// 获取库存可发量
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="stockOrgId">库存组织ID</param>
+        /// <param name="masterId">物料MASTERID</param>
+        /// <param name="custID">客户ID</param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(ServiceFault))]
+        Double GetKFQty(Context ctx, long stockOrgId, long masterId, long custID);
     }
 }

@@ -15,6 +15,38 @@ namespace KEEPER.K3.XSXServiceHelper
     public class XSXServiceHelper
     {
 
+        public static double GetKFQty(Context ctx, long stockOrgId, long masterId, long custID)
+        {
+            IOrderRequestService service = OrderRequestServiceFactory.GetService<IOrderRequestService>(ctx);
+            double kfQty = service.GetKFQty(ctx, stockOrgId, masterId, custID);
+            return kfQty;
+        }
+        /// <summary>
+        /// 通过账户用途获取收付款用途
+        /// </summary>
+        /// <param name="AccountUsage">账户用途</param>
+        /// <returns></returns>
+        public static long GetSFKYT(Context ctx,string AccountUsage)
+        {
+            ICustomerService service = CustomerServiceFactory.GetService<ICustomerService>(ctx);
+            long SFKYTID = service.GetSFKYT(ctx, AccountUsage);
+            return SFKYTID;
+        }
+
+        /// <summary>
+        /// 获取业务类型
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="AccountUsage"></param>
+        /// <param name="custID"></param>
+        /// <returns></returns>
+        public static long GetYWTYPE(Context ctx, string AccountUsage, long custID)
+        {
+            ICustomerService service = CustomerServiceFactory.GetService<ICustomerService>(ctx);
+            long YWTYPEID = service.GetYWTYPE(ctx, AccountUsage, custID);
+            return YWTYPEID;
+        }
+
         /// <summary>
         /// 判断是否是吉祥门店
         /// </summary>
@@ -27,9 +59,33 @@ namespace KEEPER.K3.XSXServiceHelper
             bool reuslt = service.IsJXCust(ctx, custID);
             return reuslt;
         }
+        /// <summary>
+        /// 判断是否是无区域门店
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="custID"></param>
+        /// <returns></returns>
+        public static bool IsWQYCust(Context ctx, long custID)
+        {
+            ICustomerService service = CustomerServiceFactory.GetService<ICustomerService>(ctx);
+            bool reuslt = service.IsWQYCust(ctx, custID);
+            return reuslt;
+        }
+        /// <summary>
+        /// 判断是否是有区域门店
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="custID"></param>
+        /// <returns></returns>
+        public static bool IsYQYCust(Context ctx, long custID)
+        {
+            ICustomerService service = CustomerServiceFactory.GetService<ICustomerService>(ctx);
+            bool reuslt = service.IsYQYCust(ctx, custID);
+            return reuslt;
+        }
 
         /// <summary>
-        /// 获取客户属性
+        /// 获取有区域客户属性
         /// </summary>
         /// <param name="ctx"></param>
         /// <param name="custID"></param>
@@ -38,6 +94,19 @@ namespace KEEPER.K3.XSXServiceHelper
         {
             ICustomerService service = CustomerServiceFactory.GetService<ICustomerService>(ctx);
             Customer cust = service.GetCustomerProperty(ctx, custID);
+            return cust;
+        }
+
+        /// <summary>
+        /// 获取无区域客户属性
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="custID"></param>
+        /// <returns></returns>
+        public static Customer GetWQYCustomerProperty(Context ctx, long custID)
+        {
+            ICustomerService service = CustomerServiceFactory.GetService<ICustomerService>(ctx);
+            Customer cust = service.GetWQYCustomerProperty(ctx, custID);
             return cust;
         }
         /// <summary>
@@ -139,10 +208,10 @@ namespace KEEPER.K3.XSXServiceHelper
         /// <param name="ctx"></param>
         /// <param name="custID"></param>
         /// <returns></returns>
-        public static double GetQYAmount(Context ctx,string custNo,long custID)
+        public static double GetQYAmount(Context ctx,string custNo)
         {
             IOrderRequestService service = OrderRequestServiceFactory.GetService<IOrderRequestService>(ctx);
-            double QYAmount = service.GetQYAmount(ctx, custNo,custID);
+            double QYAmount = service.GetQYAmount(ctx, custNo);
             return QYAmount;
         }
 
@@ -157,6 +226,19 @@ namespace KEEPER.K3.XSXServiceHelper
             IOrderRequestService service = OrderRequestServiceFactory.GetService<IOrderRequestService>(ctx);
             double MDAmount = service.GetMDAmount(ctx, custNo,custID);
             return MDAmount;
+        }
+        /// <summary>
+        /// 获取客户门店可用额度
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="custNo"></param>
+        /// <param name="custID"></param>
+        /// <returns></returns>
+        public static double GetYJAmount(Context ctx, string custNo, long custID)
+        {
+            IOrderRequestService service = OrderRequestServiceFactory.GetService<IOrderRequestService>(ctx);
+            double YJAmount = service.GetYJAmount(ctx, custNo, custID);
+            return YJAmount;
         }
     }
 }

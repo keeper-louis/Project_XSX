@@ -28,6 +28,16 @@ namespace KEEPER.K3.XSX.Contracts
         Customer GetCustomerProperty(Context ctx, long custID);
 
         /// <summary>
+        /// 通过客户内码获取无区域客户属性契约
+        /// </summary>
+        /// <param name="ctx">上下文</param>
+        /// <param name="custID">客户ID</param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(ServiceFault))]
+        Customer GetWQYCustomerProperty(Context ctx, long custID);
+
+        /// <summary>
         /// 通过对应组织内码获取客户属性契约
         /// </summary>
         /// <param name="ctx">上下文</param>
@@ -42,11 +52,52 @@ namespace KEEPER.K3.XSX.Contracts
         /// 判断是否是吉祥客户
         /// </summary>
         /// <param name="ctx">上下文</param>
-        /// <param name="custID">对应组织ID</param>
+        /// <param name="custID">客户ID</param>
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(ServiceFault))]
-        bool IsJXCust(Context ctx, long orgID);
+        bool IsJXCust(Context ctx, long custID);
+
+        /// <summary>
+        /// 判断是否是有区域门店
+        /// </summary>
+        /// <param name="ctx">上下文</param>
+        /// <param name="custID">客户ID</param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(ServiceFault))]
+        bool IsYQYCust(Context ctx, long custID);
+
+        /// <summary>
+        /// 判断是否是无区域门店
+        /// </summary>
+        /// <param name="ctx">上下文</param>
+        /// <param name="custID">客户ID</param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(ServiceFault))]
+        bool IsWQYCust(Context ctx, long custID);
+
+       /// <summary>
+       /// 通过账号用途获取收付款用途
+       /// </summary>
+       /// <param name="AccountUsage">账号用途编码</param>
+       /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(ServiceFault))]
+        long GetSFKYT(Context ctx,string AccountUsage);
+
+
+        /// <summary>
+        /// 通过账号用途获取业务类型
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="AccountUsage">账号用途</param>
+        /// <param name="custID">客户ID</param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(ServiceFault))]
+        long GetYWTYPE(Context ctx, string AccountUsage,long custID);
 
 
     }
