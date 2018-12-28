@@ -45,11 +45,16 @@ namespace KEEPER.K3.XSX.Core.ParamOption
         public static long QYDHBZJID = 107608;//区域订货保证金
         public static long MDDHHKID = 107610;//门店订货货款
 
-        //业务类型
-        public static long QYDHID = 120076;//区域订货
-        public static long YQYMDDHID = 120077; //门店订货(有区域)
-        public static long WQYMDDHID = 120078;//门店订货(无区域)
-        public static long MDYJID = 120079;//门店营建
+        //业务类型-账套1114版
+        //public static long QYDHID = 120076;//区域订货
+        //public static long YQYMDDHID = 120077; //门店订货(有区域)
+        //public static long WQYMDDHID = 120078;//门店订货(无区域)
+        //public static long MDYJID = 120079;//门店营建
+        //业务类型-正式环境版
+        public static long QYDHID = 124355;//区域订货
+        public static long YQYMDDHID = 124356; //门店订货(有区域)
+        public static long WQYMDDHID = 124357;//门店订货(无区域)
+        public static long MDYJID = 124358;//门店营建
 
 
 
