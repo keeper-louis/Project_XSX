@@ -15,10 +15,10 @@ namespace KEEPER.K3.XSXServiceHelper
     public class XSXServiceHelper
     {
 
-        public static double GetKFQty(Context ctx, long stockOrgId, long masterId, long custID)
+        public static double GetKFQty(Context ctx, long stockOrgId, long masterId, long custID, long baseUnitId, long stockUnitId)
         {
             IOrderRequestService service = OrderRequestServiceFactory.GetService<IOrderRequestService>(ctx);
-            double kfQty = service.GetKFQty(ctx, stockOrgId, masterId, custID);
+            double kfQty = service.GetKFQty(ctx, stockOrgId, masterId, custID, baseUnitId, stockUnitId);
             return kfQty;
         }
         /// <summary>

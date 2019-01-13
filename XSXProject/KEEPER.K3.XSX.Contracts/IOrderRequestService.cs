@@ -56,6 +56,6 @@ namespace KEEPER.K3.XSX.Contracts
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(ServiceFault))]
-        Double GetKFQty(Context ctx, long stockOrgId, long masterId, long custID);
+        Double GetKFQty(Context ctx, long stockOrgId, long masterId, long custID,long baseUnitId,long stockUnitId);
     }
 }

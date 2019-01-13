@@ -102,7 +102,7 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
         public override void EndOperationTransaction(EndOperationTransactionArgs e)
         {
             base.EndOperationTransaction(e);
-            object[] ids = (from p in e.DataEntitys.Where(p => (Convert.ToString(p["DOCUMENTSTATUS"]).Equals("A")))
+            object[] ids = (from p in e.DataEntitys.Where(p => (Convert.ToString(p["DOCUMENTSTATUS"]).Equals("A")|| Convert.ToString(p["DOCUMENTSTATUS"]).Equals("D")))
                             select p[0]).ToArray();//获取收付款用途不等于加盟费的单据ID
             IOperationResult submitResult = XSXServiceHelper.XSXServiceHelper.Submit(this.Context, "DE_SCMS_ApplyGools", ids);
             XSXServiceHelper.XSXServiceHelper.Log(this.Context, "Submit", submitResult);

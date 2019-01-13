@@ -20,11 +20,11 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
         //    e.FieldKeys.Add("FORGTYPE");
         //    e.FieldKeys.Add("FTOTALAMOUNT");
         //}
-        public override void OnAddValidators(AddValidatorsEventArgs e)
-        {
-            AutoAuditValidator auditValidator = new AutoAuditValidator();
-            auditValidator.EntityKey = "FBillHead";
-            e.Validators.Add(auditValidator);
-        }
+        //public override void OnAddValidators(AddValidatorsEventArgs e)
+        //{
+        //    AutoAuditValidator auditValidator = new AutoAuditValidator();
+        //    auditValidator.EntityKey = "FBillHead";
+        //    e.Validators.Add(auditValidator);
+        //}
     }
 }

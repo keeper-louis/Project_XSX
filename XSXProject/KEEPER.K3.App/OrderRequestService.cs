@@ -20,11 +20,12 @@ namespace KEEPER.K3.App
         /// <param name="masterId">物料MASTERID</param>
         /// <param name="custID">客户ID</param>
         /// <returns></returns>
-        public double GetKFQty(Context ctx, long stockOrgId, long masterId, long custID)
+        public double GetKFQty(Context ctx, long stockOrgId, long masterId, long custID,long baseUnitId, long stockUnitId)
         {
             double kcQty = 0;
             //根据物料MASTERID，库存组织ID 库存量基本单位-锁库量基本单位
             string strSql = string.Format(@"/*dialect*/select SUM(FBaseQty)-SUM(FBaseLockQty) STOCKKFQTY from T_STK_INVENTORY WHERE FSTOCKORGID = {0} and FMATERIALID  = {1}", stockOrgId, masterId);
+            
             //根据MASTERID，获取单据换算率
             string CONVERTRATESql = string.Format(@"/*dialect*/select FCONVERTNUMERATOR from T_BD_UNITCONVERTRATE where FMATERIALID = {0}",masterId);
             //根据客户ID获取已审核要货申请单的待发量
@@ -40,7 +41,7 @@ namespace KEEPER.K3.App
             if (kcQty > 0)
             {
                double ConvertRate = DBUtils.ExecuteScalar<double>(ctx, CONVERTRATESql, 1, null);
-               kcQty = kcQty / ConvertRate;
+               kcQty = baseUnitId == stockUnitId?kcQty / 1: kcQty / ConvertRate;
                double reqBillQty =  DBUtils.ExecuteScalar<double>(ctx, reqBillQtySql, 0, null);
                kcQty = kcQty - reqBillQty;
                return kcQty;

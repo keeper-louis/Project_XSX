@@ -49,18 +49,21 @@ namespace KEEPER.K3.ORDER_REQ.ServicePlugIn
                 //有区域门店，订货可发量控制
                 if ((Convert.ToString(((DynamicObject)requestDynamic["FCUSTTYPE"])["Number"]).Equals(ConstantBaseData.YQYMDNO) && Convert.ToInt64(((DynamicObject)requestDynamic["FYWTYPE"])["id"]) == ConstantBaseData.YQYMDDHID))
                 {
-                    
+
                     long custId = Convert.ToInt64(((DynamicObject)requestDynamic["FAPPLYCUST"])["Id"]);
                     DynamicObjectCollection dyObjectCol = requestDynamic["FEntity"] as DynamicObjectCollection;
                     foreach (DynamicObject dyObject in dyObjectCol)
                     {
                         long stockOrgId = Convert.ToInt64(((DynamicObject)dyObject["FDispatchOrgIdDetail"])["Id"]);
                         long masterId = Convert.ToInt64(((DynamicObject)dyObject["MaterialId"])["msterID"]);
-                        double kfQty = XSXServiceHelper.XSXServiceHelper.GetKFQty(this.Context, stockOrgId, masterId, custId);
+                        long baseUnitId = Convert.ToInt64(((DynamicObjectCollection)((DynamicObject)dyObject["MaterialId"])["MaterialBase"])[0]["BaseUnitId_Id"]);
+                        long stockUnitId = Convert.ToInt64(((DynamicObjectCollection)((DynamicObject)dyObject["MaterialId"])["MaterialStock"])[0]["StoreUnitID_Id"]);
+
+                        double kfQty = XSXServiceHelper.XSXServiceHelper.GetKFQty(this.Context, stockOrgId, masterId, custId, baseUnitId, stockUnitId);
                         double reqNum = Convert.ToDouble(dyObject["ReqQty"]);
-                        if (reqNum>kfQty)
+                        if (reqNum > kfQty)
                         {
-                            string msg = string.Format("单据：{0},第{1}行申请数量：{2}超出库存可发量：{3},不允许进行订货", requestDynamic["BillNo"],dyObject["Seq"],reqNum,reqNum-kfQty);
+                            string msg = string.Format("单据：{0},第{1}行申请数量：{2}超出库存可发量：{3},不允许进行订货", requestDynamic["BillNo"], dyObject["Seq"], reqNum, reqNum - kfQty);
                             var errInfo = new ValidationErrorInfo(
                                             item.BillNo,
                                             item.DataEntity["Id"].ToString(),

@@ -10,12 +10,45 @@ using KEEPER.K3.XSX.Core.Entity;
 using KEEPER.K3.XSXServiceHelper;
 using Kingdee.BOS.Orm.DataEntity;
 using KEEPER.K3.XSX.Core.ParamOption;
+using Kingdee.BOS.App.Data;
 
 namespace KEEPER.K3.ORDER_REQ.BusinessPlugIn
 {
     [Description("门店要货申请单-表单插件")]
     public class OrderReqBill:AbstractBillPlugIn
     {
+        public override void AfterLoadData(EventArgs e)
+        {
+            base.AfterLoadData(e);
+            if (this.Model.GetValue("FDocumentStatus").Equals("Z"))//暂存状态单据，更新可订货余额，刷新界面字段
+            {
+                if ((DynamicObject)this.Model.GetValue("FYWTYPE")!=null)
+                {
+                    double OrderAmoun = 0;
+                    //业务类型=区域订货，客户类型=区域门店
+                    if (Convert.ToInt64(((DynamicObject)this.Model.GetValue("FYWTYPE"))["Id"]) == ConstantBaseData.QYDHID && Convert.ToString(((DynamicObject)this.Model.GetValue("FCUSTTYPE"))["Number"]).Equals(ConstantBaseData.QYMDNO))
+                    {
+                        OrderAmoun = XSXServiceHelper.XSXServiceHelper.GetQYAmount(this.Context, Convert.ToString(((DynamicObject)this.Model.GetValue("FApplyCust"))["Number"]));
+                    }
+                    //业务类型=有区域门店订货，客户类型=有区域门店
+                    if ((Convert.ToInt64(((DynamicObject)this.Model.GetValue("FYWTYPE"))["Id"]) == ConstantBaseData.YQYMDDHID && Convert.ToString(((DynamicObject)this.Model.GetValue("FCUSTTYPE"))["Number"]).Equals(ConstantBaseData.YQYMDNO)) || (Convert.ToInt64(((DynamicObject)this.Model.GetValue("FYWTYPE"))["Id"]) == ConstantBaseData.WQYMDDHID && Convert.ToString(((DynamicObject)this.Model.GetValue("FCUSTTYPE"))["Number"]).Equals(ConstantBaseData.WQYMDNO)))
+                    {
+                        OrderAmoun = XSXServiceHelper.XSXServiceHelper.GetMDAmount(this.Context, Convert.ToString(((DynamicObject)this.Model.GetValue("FApplyCust"))["Number"]), Convert.ToInt64(((DynamicObject)this.Model.GetValue("FApplyCust"))["Id"]));
+                    }
+                    //业务类型=营建，客户类型=有区域门店，无区域门店
+                    if (Convert.ToInt64(((DynamicObject)this.Model.GetValue("FYWTYPE"))["Id"]) == ConstantBaseData.MDYJID && (Convert.ToString(((DynamicObject)this.Model.GetValue("FCUSTTYPE"))["Number"]).Equals(ConstantBaseData.YQYMDNO) || Convert.ToString(((DynamicObject)this.Model.GetValue("FCUSTTYPE"))["Number"]).Equals(ConstantBaseData.WQYMDNO)))
+                    {
+                        OrderAmoun = XSXServiceHelper.XSXServiceHelper.GetYJAmount(this.Context, Convert.ToString(((DynamicObject)this.Model.GetValue("FApplyCust"))["Number"]), Convert.ToInt64(((DynamicObject)this.Model.GetValue("FApplyCust"))["Id"]));
+                    }
+                    string strSql = string.Format(@"/*dialect*/update T_SCMS_ApplyGools set FORDERAMOUNT = {0} where FID = {1}", OrderAmoun, Convert.ToInt64(this.Model.DataObject["Id"]));
+                    DBUtils.Execute(this.Context, strSql);
+                    this.Model.SetValue("FORDERAMOUNT", OrderAmoun);
+                }
+                
+                
+            }
+            
+        }
         public override void DataChanged(DataChangedEventArgs e)
         {
             if (e.Field.Key.ToUpperInvariant().Equals("FYWTYPE"))
@@ -47,9 +80,11 @@ namespace KEEPER.K3.ORDER_REQ.BusinessPlugIn
                     long stockOrgID = Convert.ToInt64(((DynamicObject)this.Model.GetValue("FDispatchOrgIdDetail", e.Row))["Id"]);
                     long masterID = Convert.ToInt64(((DynamicObject)this.Model.GetValue("FMaterialId", e.Row))["msterID"]);
                     long custID = Convert.ToInt64(((DynamicObject)this.Model.GetValue("FApplyCust"))["Id"]);
+                    long baseUnitId = Convert.ToInt64(((DynamicObjectCollection)((DynamicObject)this.Model.GetValue("FMaterialId", e.Row))["MaterialBase"])[0]["BaseUnitId_Id"]);//基本单位
+                    long stockUnitId = Convert.ToInt64(((DynamicObjectCollection)((DynamicObject)this.Model.GetValue("FMaterialId", e.Row))["MaterialStock"])[0]["StoreUnitID_Id"]);//库存单位
                     if (stockOrgID>0&&masterID>0&&custID>0)
                     {
-                        kfqty = XSXServiceHelper.XSXServiceHelper.GetKFQty(this.Context, stockOrgID, masterID, custID);
+                        kfqty = XSXServiceHelper.XSXServiceHelper.GetKFQty(this.Context, stockOrgID, masterID, custID, baseUnitId, stockUnitId);
                         this.Model.SetValue("FINVENTORYQTY",kfqty,e.Row);
                     }
                 }
