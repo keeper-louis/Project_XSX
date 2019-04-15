@@ -26,7 +26,13 @@ namespace KEEPER.K3.App
     public class CommonService : ICommonService
     {
        
-
+        /// <summary>
+        /// 通过业务对象标识和业务对象ID,构建基础资料对象
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="formID">业务对象标识</param>
+        /// <param name="ObjectID">业务对象ID</param>
+        /// <returns></returns>
         public DynamicObject GetBasicObject(Context ctx, string formID,long ObjectID)
         {
             IMetaDataService metaService = ServiceHelper.GetService<IMetaDataService>();//元数据服务
@@ -36,6 +42,13 @@ namespace KEEPER.K3.App
             return BasicObject;
         }
 
+        /// <summary>
+        /// 通过业务对象标识和业务对象id数据，批量进行业务对象提交
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="formID">业务对象标识</param>
+        /// <param name="ids">业务对象id数据</param>
+        /// <returns></returns>
         public IOperationResult SubmitBill(Context ctx, string formID, object[] ids)
         {
             IMetaDataService metaService = ServiceHelper.GetService<IMetaDataService>();//元数据服务
@@ -45,6 +58,13 @@ namespace KEEPER.K3.App
             return submitResult;
         }
 
+        /// <summary>
+        /// 通过业务对象标识和业务对象id数据，进行业务单据批量审核
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="FormID">业务对象标识</param>
+        /// <param name="ids">业务对象id数组</param>
+        /// <returns></returns>
         public IOperationResult AuditBill(Context ctx, string FormID, object[] ids)
         {
             IMetaDataService metaService = ServiceHelper.GetService<IMetaDataService>();//元数据服务
@@ -53,6 +73,13 @@ namespace KEEPER.K3.App
             IOperationResult AuditResult = BusinessDataServiceHelper.Audit(ctx, Meta.BusinessInfo, ids, AuditOption);
             return AuditResult;
         }
+
+        /// <summary>
+        /// 日志记录
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="Operation"></param>
+        /// <param name="returnResult"></param>
         public void Log(Context ctx,string Operation, IOperationResult returnResult)
         {
             string strSql = string.Empty;
@@ -72,6 +99,13 @@ namespace KEEPER.K3.App
 
         }
 
+        /// <summary>
+        /// 通过业务对象标识和单据DynamicObject数据包对单据进行保存操作
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="FormID"></param>
+        /// <param name="dyObject"></param>
+        /// <returns></returns>
         public IOperationResult SaveBill(Context ctx, string FormID,DynamicObject dyObject)
         {
             IMetaDataService metaService = ServiceHelper.GetService<IMetaDataService>();//元数据服务
@@ -81,6 +115,14 @@ namespace KEEPER.K3.App
             return SaveResult;
         }
 
+        /// <summary>
+        /// 打包单据数据结构，录入各自单据需要的字段，可组装成各业务对象单据的数据包
+        /// </summary>
+        /// <param name="ctx"></param>
+        /// <param name="FormID"></param>
+        /// <param name="fillBillPropertys"></param>
+        /// <param name="BillTypeId"></param>
+        /// <returns></returns>
         public DynamicObject installCostRequestPackage(Context ctx, string FormID, Action<IDynamicFormViewService> fillBillPropertys, string BillTypeId="")
         {
             //IMetaDataService metaService = ServiceHelper.GetService<IMetaDataService>();//元数据服务

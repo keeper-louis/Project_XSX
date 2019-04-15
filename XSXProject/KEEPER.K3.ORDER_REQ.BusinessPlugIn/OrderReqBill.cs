@@ -20,7 +20,8 @@ namespace KEEPER.K3.ORDER_REQ.BusinessPlugIn
         public override void AfterLoadData(EventArgs e)
         {
             base.AfterLoadData(e);
-            if (this.Model.GetValue("FDocumentStatus").Equals("Z"))//暂存状态单据，更新可订货余额，刷新界面字段
+            //暂存状态单据，更新可订货余额，刷新界面字段
+            if (this.Model.GetValue("FDocumentStatus").Equals("Z"))
             {
                 if ((DynamicObject)this.Model.GetValue("FYWTYPE")!=null)
                 {
@@ -49,6 +50,7 @@ namespace KEEPER.K3.ORDER_REQ.BusinessPlugIn
             }
             
         }
+
         public override void DataChanged(DataChangedEventArgs e)
         {
             if (e.Field.Key.ToUpperInvariant().Equals("FYWTYPE"))
@@ -97,6 +99,7 @@ namespace KEEPER.K3.ORDER_REQ.BusinessPlugIn
             base.AfterCreateNewData(e);
             long ApplicationOrgId = Convert.ToInt64(((DynamicObject)this.Model.GetValue("FApplicationOrgId"))["Id"]);//申请组织ID
             Customer cust = XSXServiceHelper.XSXServiceHelper.GetIntCustomerProperty(this.Context, ApplicationOrgId);
+            //通过订货客户获取客户id和客户类别，判断是客户类别调用不同的获取有区域客户属性、无区域客户属性
             DynamicObject custObject = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "BD_Customer", cust.custID);//申请客户
             DynamicObject BelongCust = cust.BelongCustID > 0 ? XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "BD_Customer", cust.BelongCustID) : null;
             //DynamicObject BelongCust = XSXServiceHelper.XSXServiceHelper.GetBasicObject(this.Context, "BD_Customer", cust.BelongCustID);//服务端获取所属区域对象

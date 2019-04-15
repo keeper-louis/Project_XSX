@@ -100,6 +100,7 @@ namespace KEEPER.K3.App
                 }
             }
             return cust;
+            #region 忽略
             //using (IDataReader reader = DBUtils.ExecuteReader(ctx, strSql))
             //{
             //    while (reader.Read())
@@ -121,6 +122,7 @@ namespace KEEPER.K3.App
             //    reader.Close();
             //    return cust;
             //}
+            #endregion
         }
         /// <summary>
         /// 通过账号用途获取收付款用途ID
